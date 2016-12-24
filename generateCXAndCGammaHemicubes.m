@@ -31,15 +31,19 @@
 %            C180
 
 % radMapFile - Is a matrix containing the .ies/.ldt in .matlab format
-function [Hcx, Hcgamma] = generateCXAndCGammaHemicubes(returnTopHemicube)
+function [Hcx, Hcgamma, TopHcx, TopHcgamma, pixelDeltaAngle] = generateCXAndCGammaHemicubes(hemicubeMatrixSize)
 
-hemicubeMatrixSize = 512;
+if ~exist('hemicubeMatrixSize', 'var')
+   hemicubeMatrixSize = 512;
+end
+
 % Calculates the width and height of the hemicubes
 hemicubePixelsHeight = hemicubeMatrixSize / 2;
 hemicubePixelsWidth = hemicubeMatrixSize / 4;
 
 % Creates matrix to store hemicube
 % START - USE THIS TO GENERATE AN HEMICUBE
+pixelDeltaAngle = zeros(hemicubeMatrixSize, hemicubeMatrixSize);
 Hcx = zeros(hemicubeMatrixSize, hemicubeMatrixSize);
 Hcgamma = zeros(hemicubeMatrixSize, hemicubeMatrixSize);
 % END - USE THIS TO GENERATE AN HEMICUBE
@@ -49,26 +53,30 @@ Hcgamma = zeros(hemicubeMatrixSize, hemicubeMatrixSize);
 % pos = 1;
 % 
 % Hcx = zeros(validHemicubePositions, 1);
+% TopHcx = zeros(validHemicubePositions, 1);
 % Hcgamma = zeros(validHemicubePositions, 1);
+% TopHcgamma = zeros(validHemicubePositions, 1);
 % END - USE THIS TO GENERATE A VECTOR
 
-% Calculate the offset of the width i.e where the right side starts
-hemicubeOffsetedPixelsWidth = hemicubePixelsHeight + hemicubePixelsWidth;
 % Fills the hemicubes pixels with the corresponding radiance
 for i=1:hemicubeMatrixSize
     for j=1:hemicubeMatrixSize
         zone = getHemicubeZone(hemicubeMatrixSize, i, j);
-        if (~strcmp(zone, 'VOID'))          
+        if (~strcmp(zone, 'VOID'))
             % START - USE THIS TO GENERATE A VECTOR
-            Hcx(pos) = getCX(hemicubeMatrixSize, i, j); 
-            Hcgamma(pos) = getGamma(zone, hemicubeMatrixSize, i, j);
-            pos = pos + 1;
+%             Hcx(pos) = getCX(hemicubeMatrixSize, i, j); 
+%             Hcgamma(pos) = getGamma(zone, hemicubeMatrixSize, i, j);
+%             pos = pos + 1;
             % END - USE THIS TO GENERATE A VECTOR
             
             % START - USE THIS TO GENERATE AN HEMICUBE
-%             Hcx(i, j) = getCX(hemicubeMatrixSize, i, j);
-%             Hcgamma(i, j) = getGamma(zone, hemicubeMatrixSize, i, j);
+            Hcx(i, j) = getCX(hemicubeMatrixSize, i, j);
+            Hcgamma(i, j) = getGamma(zone, hemicubeMatrixSize, i, j);
+            pixelDeltaAngle(i, j) = getPixelFormFactor(zone, hemicubeMatrixSize, i, j);
             % END - USE THIS TO GENERATE AN HEMICUBE
         end
     end
 end
+
+TopHcx = Hcx;
+TopHcgamma = -Hcgamma + 180;

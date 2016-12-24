@@ -8,6 +8,10 @@ if ~exist('delta', 'var')
    delta = 0.001;
 end
 
+if ~exist('saveResult', 'var')
+   saveResult = 1;
+end
+
 orderedList = list;
 % Get the count of elements on the matrix
 [elemCount aux] = size(list);
