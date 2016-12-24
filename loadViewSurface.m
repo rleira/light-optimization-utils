@@ -5,7 +5,12 @@
 % takeOneEach           - number of element to skip on each iteration on
 %                         the image
 % sceneTriangleCount    - count of triangles existent in the scene
-function [viewSurfaceMesh selectedTriangles selectedIndexesOrdered] = loadViewSurface(file, extension, takeOneEach, sceneTriangleCount)
+% searchBlack           - if should look for black pixel
+function [viewSurfaceMesh selectedTriangles selectedIndexesOrdered] = loadViewSurface(file, extension, takeOneEach, sceneTriangleCount, searchBlack)
+
+if ~exist('searchBlack', 'var')
+   searchBlack = 0;
+end
 
 top = sceneTriangleCount + 1;
 
@@ -42,7 +47,13 @@ for i=1:takeOneEach:viewImageSizeI
         if (iPoint > viewImageSizeI)
             break;
         end
-        viewSurfaceMesh(realI, realJ) = ((255 - viewImage(jPoint, iPoint, 3)) * 256 + (255 - viewImage(jPoint, iPoint, 2))) * 256 + (255 - viewImage(jPoint, iPoint, 1)) + 1;
+        if searchBlack
+            if viewImage(jPoint, iPoint, 3) == 0 && viewImage(jPoint, iPoint, 2) == 0 && viewImage(jPoint, iPoint, 1) == 0 
+                viewSurfaceMesh(realI, realJ) = ((255 - viewImage(jPoint, iPoint+1, 3)) * 256 + (255 - viewImage(jPoint, iPoint+1, 2))) * 256 + (255 - viewImage(jPoint, iPoint+1, 1)) + 1;
+            end
+        else
+            viewSurfaceMesh(realI, realJ) = ((255 - viewImage(jPoint, iPoint, 3)) * 256 + (255 - viewImage(jPoint, iPoint, 2))) * 256 + (255 - viewImage(jPoint, iPoint, 1)) + 1;
+        end
     end
 end
 

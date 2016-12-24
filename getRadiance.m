@@ -82,8 +82,4 @@ end
 rx1 = ((1.0 - dX) * radMap(y1, x1)) + (dX * radMap(y1, x2));
 rx2 = ((1.0 - dX) * radMap(y2, x1)) + (dX * radMap(y2, x2));
 
-if (isnan(((1.0 - dY) * rx1) + (dY * rx2)))
-    disp('isnan')
-end
-
 radiance = ((1.0 - dY) * rx1) + (dY * rx2);

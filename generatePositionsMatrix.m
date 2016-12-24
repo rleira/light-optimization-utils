@@ -21,7 +21,7 @@ if ~exist('takeOneEach', 'var')
    takeOneEach = 1;
 end
 
-regexp = strcat(path, '*.bmp');
+regexp = strcat(path, 'H*.bmp');
 
 % ----- START LOAD FILES
 
@@ -29,8 +29,20 @@ workingDir = dir(regexp);
 positionsSize = size(workingDir);
 pos = 1;
 for file=1:positionsSize(1)
+    % Bottom Hemicube
     filePath = strcat(path, workingDir(file).name);
-    positionsMatrix(pos, :) = loadViewTrianglesHemicube(filePath, 'BMP', hemicubeMatrixSize, 21824, takeOneEach);
+    vector = loadViewTrianglesHemicube(filePath, 'BMP', hemicubeMatrixSize, 21824, takeOneEach);
+
+    % Top hemicube
+    try
+        filePath = strcat(path, 'Sen', workingDir(file).name);
+        topHemiVector = loadViewTrianglesHemicube(filePath, 'BMP', hemicubeMatrixSize, 21824, takeOneEach);
+        vector = [vector;topHemiVector];
+    catch
+        disp(strcat('Top hemicube not found for: ', workingDir(file).name));
+    end
+    
+    positionsMatrix(pos, :) = vector;
     positionsNameMap{pos} = workingDir(file).name;
     pos = pos + 1
 end
